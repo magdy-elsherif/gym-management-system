@@ -216,14 +216,9 @@ th{
   color:#166534;
 }
 
-.expired-status{
-  background:#fee2e2;
-  color:#991b1b;
-}
-
-.warning-status{
-  background:#fef3c7;
-  color:#92400e;
+.inactive-status{
+  background:#e5e7eb;
+  color:#374151;
 }
 
 .form-grid{
@@ -285,8 +280,35 @@ th{
   font-weight:bold;
 }
 
-.quick button:hover{
-  border-color:#22c55e;
+.plan-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.plan-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:16px;
+}
+
+.plan-card h4{
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+.plan-price{
+  font-size:24px;
+  font-weight:bold;
+  color:#166534;
+  margin:8px 0;
+}
+
+.plan-meta{
+  color:#6b7280;
+  line-height:1.9;
+  margin-bottom:12px;
 }
 
 .mobile-overlay{
@@ -294,8 +316,13 @@ th{
 }
 
 @media(max-width:900px){
+
   .cards{
     grid-template-columns:repeat(2,1fr);
+  }
+
+  .plan-grid{
+    grid-template-columns:1fr 1fr;
   }
 
   .sidebar{
@@ -337,9 +364,14 @@ th{
 }
 
 @media(max-width:520px){
+
   .cards{
     grid-template-columns:1fr 1fr;
     gap:9px;
+  }
+
+  .plan-grid{
+    grid-template-columns:1fr;
   }
 
   .card{
@@ -355,7 +387,7 @@ th{
   }
 
   table{
-    min-width:650px;
+    min-width:750px;
   }
 
   .table-wrap{
@@ -395,19 +427,19 @@ th{
 
   <main class="main">
 
-    <!-- لوحة التحكم -->
     <section id="dashboard" class="page active">
 
       <div class="title">
         <h2>لوحة التحكم</h2>
-        <p>نظرة سريعة على حالة الجيم اليوم</p>
+        <p>نظرة سريعة على حالة الجيم</p>
       </div>
 
       <div class="notice">
-        النظام جاهز لبدء إدخال البيانات الفعلية.
+        العملة الافتراضية للنظام: الجنيه المصري (ج.م)
       </div>
 
       <div class="cards">
+
         <div class="card">
           <div class="label">إجمالي الأعضاء</div>
           <div class="number" id="totalMembers">0</div>
@@ -421,40 +453,29 @@ th{
         </div>
 
         <div class="card">
-          <div class="label">تنتهي قريباً</div>
-          <div class="number">0</div>
-          <div class="unit">خلال 7 أيام</div>
+          <div class="label">إجمالي المطلوب</div>
+          <div class="number" id="totalDue">0</div>
+          <div class="unit">ج.م</div>
         </div>
 
         <div class="card">
-          <div class="label">اشتراكات منتهية</div>
-          <div class="number">0</div>
-          <div class="unit">اشتراك</div>
+          <div class="label">إجمالي المدفوع</div>
+          <div class="number" id="totalPaid">0</div>
+          <div class="unit">ج.م</div>
         </div>
 
         <div class="card">
-          <div class="label">حضور اليوم</div>
-          <div class="number">0</div>
-          <div class="unit">زيارة</div>
+          <div class="label">إجمالي المتبقي</div>
+          <div class="number" id="totalBalance">0</div>
+          <div class="unit">ج.م</div>
         </div>
 
         <div class="card">
-          <div class="label">اشتراكات جديدة اليوم</div>
-          <div class="number">0</div>
-          <div class="unit">اشتراك</div>
+          <div class="label">عدد الباقات</div>
+          <div class="number" id="totalPlans">0</div>
+          <div class="unit">باقة</div>
         </div>
 
-        <div class="card">
-          <div class="label">إيراد اليوم</div>
-          <div class="number">0</div>
-          <div class="unit">ريال</div>
-        </div>
-
-        <div class="card">
-          <div class="label">إيراد الشهر</div>
-          <div class="number">0</div>
-          <div class="unit">ريال</div>
-        </div>
       </div>
 
       <div class="panel">
@@ -462,7 +483,7 @@ th{
 
         <div class="quick">
           <button onclick="openPage('addMember')">➕ تسجيل عضو جديد</button>
-          <button onclick="openPage('attendance')">✅ تسجيل حضور</button>
+          <button onclick="openPage('subscriptions')">📋 إدارة الباقات</button>
           <button onclick="openPage('renewals')">🔄 تجديد اشتراك</button>
         </div>
       </div>
@@ -474,7 +495,6 @@ th{
 
     </section>
 
-    <!-- الأعضاء -->
     <section id="members" class="page">
 
       <div class="title">
@@ -485,7 +505,9 @@ th{
       <div class="panel">
 
         <div class="actions">
-          <button class="btn btn-primary" onclick="openPage('addMember')">+ إضافة عضو جديد</button>
+          <button class="btn btn-primary" onclick="openPage('addMember')">
+            + إضافة عضو جديد
+          </button>
         </div>
 
         <input
@@ -496,25 +518,32 @@ th{
         >
 
         <div class="table-wrap">
+
           <table>
+
             <thead>
               <tr>
                 <th>رقم العضوية</th>
                 <th>الاسم</th>
                 <th>الجوال</th>
                 <th>نوع الاشتراك</th>
+                <th>المطلوب</th>
+                <th>المدفوع</th>
+                <th>المتبقي</th>
                 <th>الحالة</th>
               </tr>
             </thead>
 
             <tbody id="membersTable"></tbody>
+
           </table>
+
         </div>
 
       </div>
+
     </section>
 
-    <!-- إضافة عضو -->
     <section id="addMember" class="page">
 
       <div class="title">
@@ -553,14 +582,7 @@ th{
 
             <div class="form-group">
               <label>نوع الاشتراك</label>
-              <select id="memberPlan">
-                <option>شهري</option>
-                <option>3 أشهر</option>
-                <option>6 أشهر</option>
-                <option>سنوي</option>
-                <option>أسبوعي</option>
-                <option>يومي</option>
-              </select>
+              <select id="memberPlan" onchange="applyPlanPrice()"></select>
             </div>
 
             <div class="form-group">
@@ -569,13 +591,13 @@ th{
             </div>
 
             <div class="form-group">
-              <label>المبلغ المطلوب</label>
-              <input id="amount" type="number" min="0" placeholder="0">
+              <label>المبلغ المطلوب (ج.م)</label>
+              <input id="amount" type="number" min="0" step="0.01">
             </div>
 
             <div class="form-group">
-              <label>المبلغ المدفوع</label>
-              <input id="paid" type="number" min="0" placeholder="0">
+              <label>المبلغ المدفوع (ج.م)</label>
+              <input id="paid" type="number" min="0" step="0.01">
             </div>
 
             <div class="form-group full">
@@ -595,119 +617,187 @@ th{
         </form>
 
       </div>
+
     </section>
 
-    <!-- الاشتراكات -->
     <section id="subscriptions" class="page">
+
       <div class="title">
-        <h2>الاشتراكات</h2>
-        <p>إدارة باقات وأسعار الاشتراكات</p>
+        <h2>إدارة باقات الاشتراك</h2>
+        <p>إضافة وتعديل أسعار ومدة الباقات</p>
       </div>
 
       <div class="panel">
-        <h3>الباقات الأساسية</h3>
 
-        <div class="cards">
-          <div class="card">
-            <div class="label">اشتراك شهري</div>
-            <div class="number">30</div>
-            <div class="unit">يوم</div>
+        <h3 id="planFormTitle">إضافة باقة</h3>
+
+        <form id="planForm" onsubmit="savePlan(event)">
+
+          <input type="hidden" id="planId">
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>اسم الباقة *</label>
+              <input id="planName" required>
+            </div>
+
+            <div class="form-group">
+              <label>المدة بالأيام *</label>
+              <input id="planDays" type="number" min="1" required>
+            </div>
+
+            <div class="form-group">
+              <label>السعر (ج.م) *</label>
+              <input id="planPrice" type="number" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+              <label>الحالة</label>
+
+              <select id="planActive">
+                <option value="true">نشطة</option>
+                <option value="false">غير نشطة</option>
+              </select>
+
+            </div>
+
           </div>
 
-          <div class="card">
-            <div class="label">3 أشهر</div>
-            <div class="number">90</div>
-            <div class="unit">يوم</div>
+          <br>
+
+          <div class="actions">
+
+            <button class="btn btn-primary" type="submit">
+              حفظ الباقة
+            </button>
+
+            <button
+              class="btn btn-light"
+              type="button"
+              onclick="resetPlanForm()"
+            >
+              إلغاء التعديل
+            </button>
+
           </div>
 
-          <div class="card">
-            <div class="label">6 أشهر</div>
-            <div class="number">180</div>
-            <div class="unit">يوم</div>
-          </div>
+        </form>
 
-          <div class="card">
-            <div class="label">اشتراك سنوي</div>
-            <div class="number">365</div>
-            <div class="unit">يوم</div>
-          </div>
-        </div>
       </div>
+
+      <div class="panel">
+
+        <h3>الباقات الحالية</h3>
+
+        <div class="plan-grid" id="plansGrid"></div>
+
+      </div>
+
     </section>
 
-    <!-- التجديدات -->
     <section id="renewals" class="page">
+
       <div class="title">
         <h2>تجديد الاشتراكات</h2>
         <p>تجديد اشتراك عضو مع الاحتفاظ بسجل التجديدات</p>
       </div>
 
       <div class="panel">
-        <input class="search" placeholder="ابحث عن العضو المراد تجديد اشتراكه...">
-        <p>سيتم ربط التجديد بسجل العضو والمدفوعات.</p>
+
+        <input
+          class="search"
+          placeholder="ابحث عن العضو المراد تجديد اشتراكه..."
+        >
+
+        <p>
+          سيتم تنفيذ التجديد الفعلي وربطه بالمدفوعات في المرحلة التالية.
+        </p>
+
       </div>
+
     </section>
 
-    <!-- الحضور -->
     <section id="attendance" class="page">
+
       <div class="title">
         <h2>الحضور والانصراف</h2>
         <p>تسجيل دخول وخروج أعضاء الجيم</p>
       </div>
 
       <div class="panel">
-        <input class="search" placeholder="رقم العضوية / QR / Barcode">
+
+        <input
+          class="search"
+          placeholder="رقم العضوية / QR / Barcode"
+        >
+
         <div class="actions">
           <button class="btn btn-primary">تسجيل دخول</button>
           <button class="btn btn-dark">تسجيل خروج</button>
         </div>
+
       </div>
+
     </section>
 
-    <!-- المدفوعات -->
     <section id="payments" class="page">
+
       <div class="title">
         <h2>المدفوعات</h2>
         <p>متابعة المبالغ المدفوعة والمتبقية</p>
       </div>
 
       <div class="panel">
+
         <div class="cards">
+
+          <div class="card">
+            <div class="label">إجمالي المطلوب</div>
+            <div class="number" id="paymentsDue">0</div>
+            <div class="unit">ج.م</div>
+          </div>
+
           <div class="card">
             <div class="label">إجمالي المدفوعات</div>
-            <div class="number">0</div>
-            <div class="unit">ريال</div>
+            <div class="number" id="paymentsPaid">0</div>
+            <div class="unit">ج.م</div>
           </div>
 
           <div class="card">
             <div class="label">المبالغ المتبقية</div>
-            <div class="number">0</div>
-            <div class="unit">ريال</div>
+            <div class="number" id="paymentsBalance">0</div>
+            <div class="unit">ج.م</div>
           </div>
+
         </div>
+
       </div>
+
     </section>
 
-    <!-- التنبيهات -->
     <section id="alerts" class="page">
+
       <div class="title">
         <h2>التنبيهات</h2>
         <p>الاشتراكات القريبة من الانتهاء والمنتهية</p>
       </div>
 
       <div class="panel">
-        <p>لا توجد تنبيهات حالياً.</p>
+        سيتم تفعيل التنبيهات مع تنفيذ تاريخ انتهاء الاشتراك.
       </div>
+
     </section>
 
-    <!-- التقارير -->
     <section id="reports" class="page">
+
       <div class="title">
         <h2>التقارير</h2>
         <p>تقارير الأعضاء والاشتراكات والحضور والإيرادات</p>
       </div>
 
       <div class="panel">
+
         <div class="quick">
           <button>تقرير الأعضاء</button>
           <button>تقرير الاشتراكات</button>
@@ -716,42 +806,141 @@ th{
           <button>الاشتراكات المنتهية</button>
           <button>المبالغ المتبقية</button>
         </div>
+
       </div>
+
     </section>
 
-    <!-- الإعدادات -->
     <section id="settings" class="page">
+
       <div class="title">
         <h2>إعدادات النظام</h2>
         <p>البيانات الأساسية للجيم</p>
       </div>
 
       <div class="panel">
+
         <div class="form-grid">
+
           <div class="form-group">
             <label>اسم الجيم</label>
             <input value="GYM">
           </div>
 
           <div class="form-group">
-            <label>رقم الجوال</label>
-            <input>
+            <label>العملة</label>
+            <input value="الجنيه المصري (ج.م)" readonly>
           </div>
 
           <div class="form-group full">
             <label>العنوان</label>
             <input>
           </div>
+
         </div>
+
       </div>
+
     </section>
 
   </main>
+
 </div>
 
 <script>
 
-let members = JSON.parse(localStorage.getItem("gymMembers") || "[]");
+const DEFAULT_PLANS = [
+
+  {
+    id:"P1",
+    name:"شهري",
+    days:30,
+    price:0,
+    active:true
+  },
+
+  {
+    id:"P2",
+    name:"3 أشهر",
+    days:90,
+    price:0,
+    active:true
+  },
+
+  {
+    id:"P3",
+    name:"6 أشهر",
+    days:180,
+    price:0,
+    active:true
+  },
+
+  {
+    id:"P4",
+    name:"سنوي",
+    days:365,
+    price:0,
+    active:true
+  },
+
+  {
+    id:"P5",
+    name:"أسبوعي",
+    days:7,
+    price:0,
+    active:true
+  },
+
+  {
+    id:"P6",
+    name:"يومي",
+    days:1,
+    price:0,
+    active:true
+  }
+
+];
+
+let members =
+JSON.parse(
+  localStorage.getItem("gymMembers") || "[]"
+);
+
+let plans =
+JSON.parse(
+  localStorage.getItem("gymPlans") || "null"
+);
+
+if(!Array.isArray(plans) || plans.length === 0){
+
+  plans = DEFAULT_PLANS;
+
+  localStorage.setItem(
+    "gymPlans",
+    JSON.stringify(plans)
+  );
+
+}
+
+function money(value){
+
+  return Number(value || 0).toLocaleString(
+    "ar-EG",
+    {
+      maximumFractionDigits:2
+    }
+  );
+
+}
+
+function savePlans(){
+
+  localStorage.setItem(
+    "gymPlans",
+    JSON.stringify(plans)
+  );
+
+}
 
 function showPage(pageId,button){
 
@@ -759,7 +948,9 @@ function showPage(pageId,button){
     page.classList.remove("active");
   });
 
-  document.getElementById(pageId).classList.add("active");
+  document
+    .getElementById(pageId)
+    .classList.add("active");
 
   document.querySelectorAll(".sidebar button").forEach(btn=>{
     btn.classList.remove("active");
@@ -769,7 +960,16 @@ function showPage(pageId,button){
     button.classList.add("active");
   }
 
+  if(pageId === "subscriptions"){
+    renderPlans();
+  }
+
+  if(pageId === "addMember"){
+    renderPlanOptions();
+  }
+
   closeMenu();
+
 }
 
 function openPage(pageId){
@@ -778,7 +978,17 @@ function openPage(pageId){
     page.classList.remove("active");
   });
 
-  document.getElementById(pageId).classList.add("active");
+  document
+    .getElementById(pageId)
+    .classList.add("active");
+
+  if(pageId === "subscriptions"){
+    renderPlans();
+  }
+
+  if(pageId === "addMember"){
+    renderPlanOptions();
+  }
 
   closeMenu();
 
@@ -786,133 +996,712 @@ function openPage(pageId){
     top:0,
     behavior:"smooth"
   });
+
 }
 
 function toggleMenu(){
-  document.getElementById("sidebar").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("show");
+
+  document
+    .getElementById("sidebar")
+    .classList.toggle("open");
+
+  document
+    .getElementById("overlay")
+    .classList.toggle("show");
+
 }
 
 function closeMenu(){
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("overlay").classList.remove("show");
+
+  document
+    .getElementById("sidebar")
+    .classList.remove("open");
+
+  document
+    .getElementById("overlay")
+    .classList.remove("show");
+
+}
+
+function renderPlanOptions(){
+
+  const select =
+  document.getElementById("memberPlan");
+
+  if(!select){
+    return;
+  }
+
+  const current = select.value;
+
+  select.innerHTML =
+  plans
+    .filter(plan=>plan.active)
+    .map(plan=>`
+
+      <option value="${plan.name}">
+        ${plan.name} — ${money(plan.price)} ج.م
+      </option>
+
+    `)
+    .join("");
+
+  if(
+    [...select.options]
+      .some(option=>option.value === current)
+  ){
+
+    select.value = current;
+
+  }
+
+  applyPlanPrice(false);
+
+}
+
+function applyPlanPrice(force = true){
+
+  const select =
+  document.getElementById("memberPlan");
+
+  const amount =
+  document.getElementById("amount");
+
+  if(!select || !amount){
+    return;
+  }
+
+  const plan =
+  plans.find(
+    item=>item.name === select.value
+  );
+
+  if(
+    plan &&
+    (
+      force ||
+      !amount.value
+    )
+  ){
+
+    amount.value = plan.price;
+
+  }
+
 }
 
 function saveMember(event){
 
   event.preventDefault();
 
-  const number = "GYM-" + String(members.length + 1).padStart(6,"0");
+  const nextNumber =
+  Math.max(
+    0,
+    ...members.map(member=>
+      Number(
+        String(member.number || "")
+        .replace(/\D/g,"")
+      ) || 0
+    )
+  ) + 1;
+
+  const number =
+  "GYM-" +
+  String(nextNumber).padStart(6,"0");
 
   const member = {
+
     number:number,
-    name:document.getElementById("memberName").value,
-    phone:document.getElementById("memberPhone").value,
-    gender:document.getElementById("memberGender").value,
-    birth:document.getElementById("memberBirth").value,
-    plan:document.getElementById("memberPlan").value,
-    start:document.getElementById("startDate").value,
-    amount:Number(document.getElementById("amount").value || 0),
-    paid:Number(document.getElementById("paid").value || 0),
-    notes:document.getElementById("memberNotes").value,
+
+    name:
+    document
+      .getElementById("memberName")
+      .value
+      .trim(),
+
+    phone:
+    document
+      .getElementById("memberPhone")
+      .value
+      .trim(),
+
+    gender:
+    document
+      .getElementById("memberGender")
+      .value,
+
+    birth:
+    document
+      .getElementById("memberBirth")
+      .value,
+
+    plan:
+    document
+      .getElementById("memberPlan")
+      .value,
+
+    start:
+    document
+      .getElementById("startDate")
+      .value,
+
+    amount:
+    Number(
+      document
+      .getElementById("amount")
+      .value || 0
+    ),
+
+    paid:
+    Number(
+      document
+      .getElementById("paid")
+      .value || 0
+    ),
+
+    notes:
+    document
+      .getElementById("memberNotes")
+      .value,
+
     status:"نشط"
+
   };
 
   members.push(member);
 
-  localStorage.setItem("gymMembers",JSON.stringify(members));
+  localStorage.setItem(
+    "gymMembers",
+    JSON.stringify(members)
+  );
 
-  document.getElementById("memberForm").reset();
+  document
+    .getElementById("memberForm")
+    .reset();
 
   renderMembers();
+
   updateDashboard();
 
-  alert("تم تسجيل العضو بنجاح - رقم العضوية: " + number);
+  alert(
+    "تم تسجيل العضو بنجاح - رقم العضوية: "
+    +
+    number
+  );
 
   openPage("members");
+
 }
 
 function renderMembers(){
 
-  const table = document.getElementById("membersTable");
+  const table =
+  document.getElementById("membersTable");
 
-  const search = (
-    document.getElementById("memberSearch")?.value || ""
-  ).toLowerCase();
+  if(!table){
+    return;
+  }
 
-  table.innerHTML = "";
+  const search =
+  (
+    document
+      .getElementById("memberSearch")
+      ?.value || ""
+  )
+  .toLowerCase();
 
-  const filtered = members.filter(member=>
-    member.name.toLowerCase().includes(search) ||
-    member.phone.includes(search) ||
-    member.number.toLowerCase().includes(search)
+  const filtered =
+  members.filter(member=>
+
+    (member.name || "")
+      .toLowerCase()
+      .includes(search)
+
+    ||
+
+    (member.phone || "")
+      .includes(search)
+
+    ||
+
+    (member.number || "")
+      .toLowerCase()
+      .includes(search)
+
   );
 
   if(filtered.length === 0){
 
     table.innerHTML = `
+
       <tr>
-        <td colspan="5" style="text-align:center;color:#6b7280">
+
+        <td
+          colspan="8"
+          style="
+            text-align:center;
+            color:#6b7280;
+          "
+        >
           لا توجد بيانات أعضاء
         </td>
+
       </tr>
+
     `;
 
     return;
+
   }
 
-  filtered.forEach(member=>{
+  table.innerHTML =
+  filtered
+    .map(member=>{
 
-    const row = document.createElement("tr");
+      const balance =
+      Number(member.amount || 0)
+      -
+      Number(member.paid || 0);
 
-    row.innerHTML = `
-      <td>${member.number}</td>
-      <td>${member.name}</td>
-      <td>${member.phone}</td>
-      <td>${member.plan}</td>
-      <td>
-        <span class="status active-status">
-          ${member.status}
-        </span>
-      </td>
-    `;
+      return `
 
-    table.appendChild(row);
-  });
+        <tr>
+
+          <td>
+            ${member.number || ""}
+          </td>
+
+          <td>
+            ${member.name || ""}
+          </td>
+
+          <td>
+            ${member.phone || ""}
+          </td>
+
+          <td>
+            ${member.plan || ""}
+          </td>
+
+          <td>
+            ${money(member.amount)}
+          </td>
+
+          <td>
+            ${money(member.paid)}
+          </td>
+
+          <td>
+            ${money(balance)}
+          </td>
+
+          <td>
+
+            <span class="status active-status">
+
+              ${member.status || "نشط"}
+
+            </span>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    })
+    .join("");
+
 }
 
 function updateDashboard(){
 
-  document.getElementById("totalMembers").textContent = members.length;
+  const due =
+  members.reduce(
+    (sum,member)=>
+      sum + Number(member.amount || 0),
+    0
+  );
 
-  const active = members.filter(member=>member.status === "نشط").length;
+  const paid =
+  members.reduce(
+    (sum,member)=>
+      sum + Number(member.paid || 0),
+    0
+  );
 
-  document.getElementById("activeMembers").textContent = active;
+  document
+    .getElementById("totalMembers")
+    .textContent =
+    members.length;
 
-  const recent = document.getElementById("recentMembers");
+  document
+    .getElementById("activeMembers")
+    .textContent =
+    members.filter(
+      member=>
+      (member.status || "نشط")
+      ===
+      "نشط"
+    ).length;
+
+  document
+    .getElementById("totalDue")
+    .textContent =
+    money(due);
+
+  document
+    .getElementById("totalPaid")
+    .textContent =
+    money(paid);
+
+  document
+    .getElementById("totalBalance")
+    .textContent =
+    money(due - paid);
+
+  document
+    .getElementById("totalPlans")
+    .textContent =
+    plans.length;
+
+  document
+    .getElementById("paymentsDue")
+    .textContent =
+    money(due);
+
+  document
+    .getElementById("paymentsPaid")
+    .textContent =
+    money(paid);
+
+  document
+    .getElementById("paymentsBalance")
+    .textContent =
+    money(due - paid);
+
+  const recent =
+  document.getElementById("recentMembers");
 
   if(members.length === 0){
-    recent.innerHTML = "لا توجد بيانات حتى الآن.";
+
+    recent.innerHTML =
+    "لا توجد بيانات حتى الآن.";
+
     return;
+
   }
 
-  recent.innerHTML = members
+  recent.innerHTML =
+  members
     .slice(-5)
     .reverse()
     .map(member=>`
-      <div style="
-        padding:10px 0;
-        border-bottom:1px solid #eee;
-      ">
-        <strong>${member.name}</strong>
+
+      <div
+        style="
+          padding:10px 0;
+          border-bottom:1px solid #eee;
+        "
+      >
+
+        <strong>
+          ${member.name}
+        </strong>
+
         <br>
-        <small>${member.number} — ${member.plan}</small>
+
+        <small>
+          ${member.number}
+          —
+          ${member.plan}
+        </small>
+
       </div>
+
     `)
     .join("");
+
 }
 
+function renderPlans(){
+
+  const grid =
+  document.getElementById("plansGrid");
+
+  if(!grid){
+    return;
+  }
+
+  grid.innerHTML =
+  plans
+    .map(plan=>`
+
+      <div class="plan-card">
+
+        <h4>
+          ${plan.name}
+        </h4>
+
+        <div class="plan-price">
+          ${money(plan.price)} ج.م
+        </div>
+
+        <div class="plan-meta">
+
+          المدة:
+          ${plan.days}
+          يوم
+
+          <br>
+
+          الحالة:
+
+          <span
+            class="
+              status
+              ${
+                plan.active
+                ?
+                "active-status"
+                :
+                "inactive-status"
+              }
+            "
+          >
+
+            ${
+              plan.active
+                ?
+                "نشطة"
+                :
+                "غير نشطة"
+            }
+
+          </span>
+
+        </div>
+
+        <div class="actions">
+
+          <button
+            class="btn btn-dark"
+            onclick="editPlan('${plan.id}')"
+          >
+            تعديل
+          </button>
+
+          <button
+            class="btn btn-light"
+            onclick="togglePlan('${plan.id}')"
+          >
+
+            ${
+              plan.active
+                ?
+                "إيقاف"
+                :
+                "تفعيل"
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `)
+    .join("");
+
+  renderPlanOptions();
+
+  updateDashboard();
+
+}
+
+function savePlan(event){
+
+  event.preventDefault();
+
+  const id =
+  document
+    .getElementById("planId")
+    .value;
+
+  const name =
+  document
+    .getElementById("planName")
+    .value
+    .trim();
+
+  const days =
+  Number(
+    document
+      .getElementById("planDays")
+      .value
+  );
+
+  const price =
+  Number(
+    document
+      .getElementById("planPrice")
+      .value
+  );
+
+  const active =
+  document
+    .getElementById("planActive")
+    .value
+    ===
+    "true";
+
+  if(id){
+
+    const plan =
+    plans.find(
+      item=>item.id === id
+    );
+
+    if(plan){
+
+      plan.name = name;
+
+      plan.days = days;
+
+      plan.price = price;
+
+      plan.active = active;
+
+    }
+
+  }
+  else{
+
+    plans.push({
+
+      id:
+      "P" + Date.now(),
+
+      name:name,
+
+      days:days,
+
+      price:price,
+
+      active:active
+
+    });
+
+  }
+
+  savePlans();
+
+  resetPlanForm();
+
+  renderPlans();
+
+  alert(
+    "تم حفظ الباقة بنجاح"
+  );
+
+}
+
+function editPlan(id){
+
+  const plan =
+  plans.find(
+    item=>item.id === id
+  );
+
+  if(!plan){
+    return;
+  }
+
+  document
+    .getElementById("planId")
+    .value =
+    plan.id;
+
+  document
+    .getElementById("planName")
+    .value =
+    plan.name;
+
+  document
+    .getElementById("planDays")
+    .value =
+    plan.days;
+
+  document
+    .getElementById("planPrice")
+    .value =
+    plan.price;
+
+  document
+    .getElementById("planActive")
+    .value =
+    String(plan.active);
+
+  document
+    .getElementById("planFormTitle")
+    .textContent =
+    "تعديل الباقة";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+function togglePlan(id){
+
+  const plan =
+  plans.find(
+    item=>item.id === id
+  );
+
+  if(!plan){
+    return;
+  }
+
+  plan.active =
+  !plan.active;
+
+  savePlans();
+
+  renderPlans();
+
+}
+
+function resetPlanForm(){
+
+  document
+    .getElementById("planForm")
+    .reset();
+
+  document
+    .getElementById("planId")
+    .value = "";
+
+  document
+    .getElementById("planFormTitle")
+    .textContent =
+    "إضافة باقة";
+
+  document
+    .getElementById("planActive")
+    .value =
+    "true";
+
+}
+
+renderPlanOptions();
+
 renderMembers();
+
+renderPlans();
+
 updateDashboard();
 
 </script>
