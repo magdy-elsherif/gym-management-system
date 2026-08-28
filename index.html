@@ -1,29 +1,921 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>نظام إدارة الجيم</title>
 
 <style>
-
-*{box-sizing:border-box}
-
-body{
-
-margin:0;
-
-font-family:Arial,Tahoma,sans-serif;
-
-background:#f3f5f7;
-
-color:#1f2937
-
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-h
+body{
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f3f5f7;
+  color:#17202a;
+}
+
+.header{
+  background:#111827;
+  color:white;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.header h1{
+  font-size:21px;
+}
+
+.header small{
+  color:#9ca3af;
+}
+
+.menu-btn{
+  background:#22c55e;
+  border:0;
+  color:white;
+  font-size:22px;
+  width:45px;
+  height:45px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 81px);
+}
+
+.sidebar{
+  width:245px;
+  background:#1f2937;
+  padding:15px;
+  color:white;
+}
+
+.sidebar button{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#e5e7eb;
+  text-align:right;
+  padding:14px 12px;
+  margin-bottom:5px;
+  border-radius:9px;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.sidebar button:hover,
+.sidebar button.active{
+  background:#22c55e;
+  color:white;
+}
+
+.main{
+  flex:1;
+  padding:22px;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.title{
+  margin-bottom:20px;
+}
+
+.title h2{
+  font-size:25px;
+  margin-bottom:6px;
+}
+
+.title p{
+  color:#6b7280;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  border-right:4px solid #22c55e;
+}
+
+.card .label{
+  color:#6b7280;
+  font-size:14px;
+}
+
+.card .number{
+  font-size:29px;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+.card .unit{
+  font-size:13px;
+  color:#9ca3af;
+}
+
+.panel{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.panel h3{
+  margin-bottom:15px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+.btn{
+  border:0;
+  padding:11px 16px;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.btn-primary{
+  background:#22c55e;
+  color:white;
+}
+
+.btn-dark{
+  background:#111827;
+  color:white;
+}
+
+.btn-light{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.search{
+  width:100%;
+  padding:12px;
+  border:1px solid #d1d5db;
+  border-radius:9px;
+  margin-bottom:15px;
+  font-size:15px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:12px 8px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:right;
+  font-size:14px;
+}
+
+th{
+  background:#f9fafb;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+}
+
+.active-status{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.expired-status{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.warning-status{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:13px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.form-group label{
+  font-size:14px;
+  font-weight:bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  padding:11px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  font-family:inherit;
+  font-size:15px;
+}
+
+.form-group textarea{
+  min-height:80px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.notice{
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+  color:#166534;
+  padding:13px;
+  border-radius:10px;
+  margin-bottom:18px;
+}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.quick button{
+  padding:18px 10px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.quick button:hover{
+  border-color:#22c55e;
+}
+
+.mobile-overlay{
+  display:none;
+}
+
+@media(max-width:900px){
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .sidebar{
+    position:fixed;
+    top:81px;
+    right:-260px;
+    height:calc(100vh - 81px);
+    z-index:30;
+    transition:.25s;
+  }
+
+  .sidebar.open{
+    right:0;
+  }
+
+  .main{
+    width:100%;
+    padding:15px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .quick{
+    grid-template-columns:1fr;
+  }
+
+  .mobile-overlay{
+    position:fixed;
+    inset:81px 0 0 0;
+    background:rgba(0,0,0,.4);
+    z-index:20;
+  }
+
+  .mobile-overlay.show{
+    display:block;
+  }
+}
+
+@media(max-width:520px){
+  .cards{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+
+  .card{
+    padding:13px;
+  }
+
+  .card .number{
+    font-size:23px;
+  }
+
+  .header h1{
+    font-size:17px;
+  }
+
+  table{
+    min-width:650px;
+  }
+
+  .table-wrap{
+    overflow-x:auto;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div>
+    <h1>🏋️ نظام إدارة الجيم</h1>
+    <small>GYM Management System</small>
+  </div>
+
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar">
+    <button class="active" onclick="showPage('dashboard',this)">🏠 لوحة التحكم</button>
+    <button onclick="showPage('members',this)">👥 الأعضاء</button>
+    <button onclick="showPage('addMember',this)">➕ إضافة عضو</button>
+    <button onclick="showPage('subscriptions',this)">📋 الاشتراكات</button>
+    <button onclick="showPage('renewals',this)">🔄 التجديدات</button>
+    <button onclick="showPage('attendance',this)">✅ الحضور والانصراف</button>
+    <button onclick="showPage('payments',this)">💰 المدفوعات</button>
+    <button onclick="showPage('alerts',this)">🔔 التنبيهات</button>
+    <button onclick="showPage('reports',this)">📊 التقارير</button>
+    <button onclick="showPage('settings',this)">⚙️ الإعدادات</button>
+  </aside>
+
+  <div class="mobile-overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <main class="main">
+
+    <!-- لوحة التحكم -->
+    <section id="dashboard" class="page active">
+
+      <div class="title">
+        <h2>لوحة التحكم</h2>
+        <p>نظرة سريعة على حالة الجيم اليوم</p>
+      </div>
+
+      <div class="notice">
+        النظام جاهز لبدء إدخال البيانات الفعلية.
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="label">إجمالي الأعضاء</div>
+          <div class="number" id="totalMembers">0</div>
+          <div class="unit">عضو</div>
+        </div>
+
+        <div class="card">
+          <div class="label">اشتراكات نشطة</div>
+          <div class="number" id="activeMembers">0</div>
+          <div class="unit">اشتراك</div>
+        </div>
+
+        <div class="card">
+          <div class="label">تنتهي قريباً</div>
+          <div class="number">0</div>
+          <div class="unit">خلال 7 أيام</div>
+        </div>
+
+        <div class="card">
+          <div class="label">اشتراكات منتهية</div>
+          <div class="number">0</div>
+          <div class="unit">اشتراك</div>
+        </div>
+
+        <div class="card">
+          <div class="label">حضور اليوم</div>
+          <div class="number">0</div>
+          <div class="unit">زيارة</div>
+        </div>
+
+        <div class="card">
+          <div class="label">اشتراكات جديدة اليوم</div>
+          <div class="number">0</div>
+          <div class="unit">اشتراك</div>
+        </div>
+
+        <div class="card">
+          <div class="label">إيراد اليوم</div>
+          <div class="number">0</div>
+          <div class="unit">ريال</div>
+        </div>
+
+        <div class="card">
+          <div class="label">إيراد الشهر</div>
+          <div class="number">0</div>
+          <div class="unit">ريال</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>إجراءات سريعة</h3>
+
+        <div class="quick">
+          <button onclick="openPage('addMember')">➕ تسجيل عضو جديد</button>
+          <button onclick="openPage('attendance')">✅ تسجيل حضور</button>
+          <button onclick="openPage('renewals')">🔄 تجديد اشتراك</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>آخر الأعضاء المسجلين</h3>
+        <div id="recentMembers">لا توجد بيانات حتى الآن.</div>
+      </div>
+
+    </section>
+
+    <!-- الأعضاء -->
+    <section id="members" class="page">
+
+      <div class="title">
+        <h2>إدارة الأعضاء</h2>
+        <p>عرض وبحث وإدارة بيانات أعضاء الجيم</p>
+      </div>
+
+      <div class="panel">
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="openPage('addMember')">+ إضافة عضو جديد</button>
+        </div>
+
+        <input
+          class="search"
+          id="memberSearch"
+          placeholder="ابحث بالاسم أو رقم العضوية أو الجوال..."
+          oninput="renderMembers()"
+        >
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>رقم العضوية</th>
+                <th>الاسم</th>
+                <th>الجوال</th>
+                <th>نوع الاشتراك</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+
+            <tbody id="membersTable"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- إضافة عضو -->
+    <section id="addMember" class="page">
+
+      <div class="title">
+        <h2>إضافة عضو جديد</h2>
+        <p>تسجيل بيانات العضو والاشتراك</p>
+      </div>
+
+      <div class="panel">
+
+        <form id="memberForm" onsubmit="saveMember(event)">
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>اسم العضو *</label>
+              <input id="memberName" required>
+            </div>
+
+            <div class="form-group">
+              <label>رقم الجوال *</label>
+              <input id="memberPhone" type="tel" required>
+            </div>
+
+            <div class="form-group">
+              <label>الجنس</label>
+              <select id="memberGender">
+                <option value="ذكر">ذكر</option>
+                <option value="أنثى">أنثى</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>تاريخ الميلاد</label>
+              <input id="memberBirth" type="date">
+            </div>
+
+            <div class="form-group">
+              <label>نوع الاشتراك</label>
+              <select id="memberPlan">
+                <option>شهري</option>
+                <option>3 أشهر</option>
+                <option>6 أشهر</option>
+                <option>سنوي</option>
+                <option>أسبوعي</option>
+                <option>يومي</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>تاريخ بداية الاشتراك</label>
+              <input id="startDate" type="date">
+            </div>
+
+            <div class="form-group">
+              <label>المبلغ المطلوب</label>
+              <input id="amount" type="number" min="0" placeholder="0">
+            </div>
+
+            <div class="form-group">
+              <label>المبلغ المدفوع</label>
+              <input id="paid" type="number" min="0" placeholder="0">
+            </div>
+
+            <div class="form-group full">
+              <label>ملاحظات</label>
+              <textarea id="memberNotes"></textarea>
+            </div>
+
+          </div>
+
+          <br>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">حفظ العضو</button>
+            <button type="reset" class="btn btn-light">مسح البيانات</button>
+          </div>
+
+        </form>
+
+      </div>
+    </section>
+
+    <!-- الاشتراكات -->
+    <section id="subscriptions" class="page">
+      <div class="title">
+        <h2>الاشتراكات</h2>
+        <p>إدارة باقات وأسعار الاشتراكات</p>
+      </div>
+
+      <div class="panel">
+        <h3>الباقات الأساسية</h3>
+
+        <div class="cards">
+          <div class="card">
+            <div class="label">اشتراك شهري</div>
+            <div class="number">30</div>
+            <div class="unit">يوم</div>
+          </div>
+
+          <div class="card">
+            <div class="label">3 أشهر</div>
+            <div class="number">90</div>
+            <div class="unit">يوم</div>
+          </div>
+
+          <div class="card">
+            <div class="label">6 أشهر</div>
+            <div class="number">180</div>
+            <div class="unit">يوم</div>
+          </div>
+
+          <div class="card">
+            <div class="label">اشتراك سنوي</div>
+            <div class="number">365</div>
+            <div class="unit">يوم</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- التجديدات -->
+    <section id="renewals" class="page">
+      <div class="title">
+        <h2>تجديد الاشتراكات</h2>
+        <p>تجديد اشتراك عضو مع الاحتفاظ بسجل التجديدات</p>
+      </div>
+
+      <div class="panel">
+        <input class="search" placeholder="ابحث عن العضو المراد تجديد اشتراكه...">
+        <p>سيتم ربط التجديد بسجل العضو والمدفوعات.</p>
+      </div>
+    </section>
+
+    <!-- الحضور -->
+    <section id="attendance" class="page">
+      <div class="title">
+        <h2>الحضور والانصراف</h2>
+        <p>تسجيل دخول وخروج أعضاء الجيم</p>
+      </div>
+
+      <div class="panel">
+        <input class="search" placeholder="رقم العضوية / QR / Barcode">
+        <div class="actions">
+          <button class="btn btn-primary">تسجيل دخول</button>
+          <button class="btn btn-dark">تسجيل خروج</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- المدفوعات -->
+    <section id="payments" class="page">
+      <div class="title">
+        <h2>المدفوعات</h2>
+        <p>متابعة المبالغ المدفوعة والمتبقية</p>
+      </div>
+
+      <div class="panel">
+        <div class="cards">
+          <div class="card">
+            <div class="label">إجمالي المدفوعات</div>
+            <div class="number">0</div>
+            <div class="unit">ريال</div>
+          </div>
+
+          <div class="card">
+            <div class="label">المبالغ المتبقية</div>
+            <div class="number">0</div>
+            <div class="unit">ريال</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- التنبيهات -->
+    <section id="alerts" class="page">
+      <div class="title">
+        <h2>التنبيهات</h2>
+        <p>الاشتراكات القريبة من الانتهاء والمنتهية</p>
+      </div>
+
+      <div class="panel">
+        <p>لا توجد تنبيهات حالياً.</p>
+      </div>
+    </section>
+
+    <!-- التقارير -->
+    <section id="reports" class="page">
+      <div class="title">
+        <h2>التقارير</h2>
+        <p>تقارير الأعضاء والاشتراكات والحضور والإيرادات</p>
+      </div>
+
+      <div class="panel">
+        <div class="quick">
+          <button>تقرير الأعضاء</button>
+          <button>تقرير الاشتراكات</button>
+          <button>تقرير الحضور</button>
+          <button>تقرير الإيرادات</button>
+          <button>الاشتراكات المنتهية</button>
+          <button>المبالغ المتبقية</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- الإعدادات -->
+    <section id="settings" class="page">
+      <div class="title">
+        <h2>إعدادات النظام</h2>
+        <p>البيانات الأساسية للجيم</p>
+      </div>
+
+      <div class="panel">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>اسم الجيم</label>
+            <input value="GYM">
+          </div>
+
+          <div class="form-group">
+            <label>رقم الجوال</label>
+            <input>
+          </div>
+
+          <div class="form-group full">
+            <label>العنوان</label>
+            <input>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+
+let members = JSON.parse(localStorage.getItem("gymMembers") || "[]");
+
+function showPage(pageId,button){
+
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
+
+  document.getElementById(pageId).classList.add("active");
+
+  document.querySelectorAll(".sidebar button").forEach(btn=>{
+    btn.classList.remove("active");
+  });
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  closeMenu();
+}
+
+function openPage(pageId){
+
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.remove("active");
+  });
+
+  document.getElementById(pageId).classList.add("active");
+
+  closeMenu();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+function closeMenu(){
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+}
+
+function saveMember(event){
+
+  event.preventDefault();
+
+  const number = "GYM-" + String(members.length + 1).padStart(6,"0");
+
+  const member = {
+    number:number,
+    name:document.getElementById("memberName").value,
+    phone:document.getElementById("memberPhone").value,
+    gender:document.getElementById("memberGender").value,
+    birth:document.getElementById("memberBirth").value,
+    plan:document.getElementById("memberPlan").value,
+    start:document.getElementById("startDate").value,
+    amount:Number(document.getElementById("amount").value || 0),
+    paid:Number(document.getElementById("paid").value || 0),
+    notes:document.getElementById("memberNotes").value,
+    status:"نشط"
+  };
+
+  members.push(member);
+
+  localStorage.setItem("gymMembers",JSON.stringify(members));
+
+  document.getElementById("memberForm").reset();
+
+  renderMembers();
+  updateDashboard();
+
+  alert("تم تسجيل العضو بنجاح - رقم العضوية: " + number);
+
+  openPage("members");
+}
+
+function renderMembers(){
+
+  const table = document.getElementById("membersTable");
+
+  const search = (
+    document.getElementById("memberSearch")?.value || ""
+  ).toLowerCase();
+
+  table.innerHTML = "";
+
+  const filtered = members.filter(member=>
+    member.name.toLowerCase().includes(search) ||
+    member.phone.includes(search) ||
+    member.number.toLowerCase().includes(search)
+  );
+
+  if(filtered.length === 0){
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center;color:#6b7280">
+          لا توجد بيانات أعضاء
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  filtered.forEach(member=>{
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${member.number}</td>
+      <td>${member.name}</td>
+      <td>${member.phone}</td>
+      <td>${member.plan}</td>
+      <td>
+        <span class="status active-status">
+          ${member.status}
+        </span>
+      </td>
+    `;
+
+    table.appendChild(row);
+  });
+}
+
+function updateDashboard(){
+
+  document.getElementById("totalMembers").textContent = members.length;
+
+  const active = members.filter(member=>member.status === "نشط").length;
+
+  document.getElementById("activeMembers").textContent = active;
+
+  const recent = document.getElementById("recentMembers");
+
+  if(members.length === 0){
+    recent.innerHTML = "لا توجد بيانات حتى الآن.";
+    return;
+  }
+
+  recent.innerHTML = members
+    .slice(-5)
+    .reverse()
+    .map(member=>`
+      <div style="
+        padding:10px 0;
+        border-bottom:1px solid #eee;
+      ">
+        <strong>${member.name}</strong>
+        <br>
+        <small>${member.number} — ${member.plan}</small>
+      </div>
+    `)
+    .join("");
+}
+
+renderMembers();
+updateDashboard();
+
+</script>
+
+</body>
+</html>
