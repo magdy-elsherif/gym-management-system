@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>النسخ الاحتياطي - GYM</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial;background:#f3f5f7;color:#17202a}
+header{background:#111827;color:white;padding:20px;text-align:center}
+main{max-width:700px;margin:30px auto;padding:15px}
+.box{background:white;padding:22px;border-radius:16px;margin-bottom:18px;box-shadow:0 2px 8px #00000012}
+button,.fileBtn{display:block;width:100%;border:0;border-radius:10px;padding:15px;margin-top:12px;font-size:17px;cursor:pointer;text-align:center}
+.green{background:#22c55e;color:white}
+.dark{background:#111827;color:white}
+.light{background:#e5e7eb;color:#111827}
+input[type=file]{display:none}
+.note{background:#fffbeb;border:1px solid #fde68a;padding:14px;border-radius:10px;line-height:1.8}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>🏋️ GYM</h2>
+<div>النسخ الاحتياطي واستعادة البيانات</div>
+</header>
+
+<main>
+
+<div class="box">
+<h3>💾 إنشاء نسخة احتياطية</h3>
+<p>يحفظ جميع بيانات النظام في ملف واحد على جهازك.</p>
+<button class="green" onclick="makeBackup()">تحميل نسخة احتياطية</button>
+</div>
+
+<div class="box">
+<h3>♻️ استعادة نسخة احتياطية</h3>
+<p>اختر ملف النسخة الاحتياطية الذي تم حفظه سابقًا.</p>
+
+<label class="fileBtn dark" for="restoreFile">
+اختيار ملف النسخة الاحتياطية
+</label>
+
+<input id="restoreFile" type="file" accept=".json,application/json" onchange="restoreBackup(event)">
+</div>
+
+<div class="note">
+⚠️ عند استعادة نسخة احتياطية سيتم استبدال بيانات النظام الحالية بالبيانات الموجودة داخل الملف.
+</div>
+
+<button class="light" onclick="location.href='index.html'">
+العودة إلى نظام الجيم
+</button>
+
+</main>
+
+<script>
+
+const keys=[
+'gymMembers',
+'gymPlans',
+'gymPayments',
+'gymAttendance',
+'gymRenewals',
+'gymExpenses',
+'gymSettings'
+];
+
+function makeBackup(){
+
+let data={
+system:'GYM Management System',
+version:1,
+createdAt:new Date().toISOString(),
+data:{}
+};
+
+keys.forEach(k=>{
+data.data[k]=localStorage.getItem(k);
+});
+
+let blob=new Blob(
+[JSON.stringify(data,null,2)],
+{type:'application/json'}
+);
+
+let url=URL.createObjectURL(blob);
+let a=document.createElement('a');
+
+let d=new Date();
+let date=d.toISOString().slice(0,10);
+
+a.href=url;
+a.download='GYM-Backup-'+date+'.json';
+
+document.body.appendChild(a);
+a.click();
+a.remove();
+
+URL.revokeObjectURL(url);
+
+alert('تم إنشاء النسخة الاحتياطية بنجاح');
+}
+
+function restoreBackup(event){
+
+let file=event.target.files[0];
+if(!file)return;
+
+let reader=new FileReader();
+
+reader.onload=function(){
+
+try{
+
+let backup=JSON.parse(reader.result);
+
+if(!backup.data){
+alert('ملف النسخة الاحتياطية غير صحيح');
+return;
+}
+
+if(!confirm('سيتم استبدال بيانات النظام الحالية. هل تريد المتابعة؟')){
+event.target.value='';
+return;
+}
+
+keys.forEach(k=>{
+
+if(
+Object.prototype.hasOwnProperty.call(backup.data,k)
+){
+
+let value=backup.data[k];
+
+if(value===null){
+localStorage.removeItem(k);
+}else{
+localStorage.setItem(k,value);
+}
+
+}
+
+});
+
+alert('تمت استعادة البيانات بنجاح');
+
+location.href='index.html';
+
+}catch(e){
+
+alert('تعذر قراءة ملف النسخة الاحتياطية');
+
+}
+
+};
+
+reader.readAsText(file);
+
+}
+
+</script>
+
+</body>
+</html>
